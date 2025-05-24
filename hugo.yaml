@@ -25,3 +25,4 @@ params:
   SocialIcons:
       - name: github # 可选
         url: 'https://github.com/IAMLEIzZ'
+  mainSections: ["posts"]
