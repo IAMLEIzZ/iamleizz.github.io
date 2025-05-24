@@ -24,4 +24,4 @@ params:
     Content: '总结给自己看的技术' # 描述
   SocialIcons:
       - name: github # 可选
-      url: 'https://github.com/IAMLEIzZ'
+        url: 'https://github.com/IAMLEIzZ'
