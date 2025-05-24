@@ -1,0 +1,27 @@
+baseURL: https://example.org/
+languageCode: en-us
+title: My New Hugo Site
+theme: ["PaperMod"]
+
+
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+
+menu:
+  main:
+  - identifier: search
+    name: Search
+    url: /search/
+    weight: 10
+
+
+params:
+  homeInfoParams:
+    Title: '痕' # 主题
+    Content: '总结给自己看的技术' # 描述
+  SocialIcons:
+      - name: github # 可选
+        url: 'https://github.com/IAMLEIzZ'
