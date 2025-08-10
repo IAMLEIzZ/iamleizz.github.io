@@ -1,6 +1,6 @@
 baseURL: https://iamleizz.github.io/
 languageCode: en-us
-title: My New Hugo Site
+title: 超级小石堆
 theme: ["PaperMod"]
 
 
@@ -20,8 +20,8 @@ menu:
 
 params:
   homeInfoParams:
-    Title: '痕' # 主题
-    Content: '总结给自己看的技术' # 描述
+    Title: 'PR' # 主题
+    Content: '远征' # 描述
   SocialIcons:
       - name: github # 可选
         url: 'https://github.com/IAMLEIzZ'
