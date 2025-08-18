@@ -20,8 +20,8 @@ menu:
 
 params:
   homeInfoParams:
-    Title: 'PR' # 主题
-    Content: '远征' # 描述
+    Title: 'Lifelong Learning' # 主题
+    Content: '进步不能停' # 描述
   SocialIcons:
       - name: github # 可选
         url: 'https://github.com/IAMLEIzZ'
