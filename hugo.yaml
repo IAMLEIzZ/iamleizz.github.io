@@ -23,7 +23,7 @@ menu:
     url: /
     weight: 2
   - identifier: posts
-    name: 📚 文章
+    name: 📚文章
     url: posts
     weight: 3
   - identifier: tags
