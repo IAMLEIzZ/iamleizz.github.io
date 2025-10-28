@@ -43,7 +43,7 @@ params:
       - name: github # 可选
         url: 'https://github.com/IAMLEIzZ'
       - name: email
-        url: "mailto:1993118189@qq.com"
+        url: "mailto:1399311818@qq.com"
 
   mainSections: ["posts"]
 
