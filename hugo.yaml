@@ -42,4 +42,12 @@ params:
   SocialIcons:
       - name: github # 可选
         url: 'https://github.com/IAMLEIzZ'
+      - name: email
+        url: "mailto:1993118189@qq.com"
+
   mainSections: ["posts"]
+
+  #谷歌分析
+  analytics: 
+        google:
+            SiteVerificationTag: ""
