@@ -1755,3 +1755,9 @@ func main() {
 ```
 
 在这种极端的情况下，二者所占据的内存差异极大，我想这是一个为什么不用 `interface{}` 的点。而且 go 底层对不同类型的 kv 对的 map 都做了特殊优化，用 `interface{}` 是又慢又重。
+## 参考资料
+https://pkg.go.dev/gitea.wit.com/jcarr/iter/abi#OldMapBucketCountBits  
+https://draven.co/golang/docs/part2-foundation/ch03-datastructure/golang-hashmap/#%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0  
+https://stackoverflow.com/questions/55925822/why-are-iterations-over-maps-random  
+https://zhuanlan.zhihu.com/p/597483155  
+https://www.cnblogs.com/baxianhua/p/11699068.html
