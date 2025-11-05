@@ -14,7 +14,7 @@ author: 小石堆
 
     1.24 前后 map 的世界，在 1.24 后，go 的 map 换了实现方式，让我们来康康
 
-## 1 追踪 map 的起始点
+# 1 追踪 map 的起始点
 
 看下面这段代码，我们来定位一下 make 之后发生了什么？
 
@@ -36,11 +36,11 @@ func main() {
 
 在进入具体方法之前，我们先了解一下 1.24 之前 go 的 map 的结构
 
-## 2 1.24 前的世界
+# 2 1.24 前的世界
 
     本节 go 的代码是基于 1.23.2 版本的
 
-### 2.1 map 的基本构造
+## 2.1 map 的基本构造
 
 ![image.png](https://img.xiaoshidui.top/blog-pic/images/20251029174955534.png)
 在 1.24 前，go 的 map 实现是基于桶数组 + 溢出桶实现的，具体而言是基于 runtime 下的这两个结构体实现的。  
@@ -91,7 +91,7 @@ type bmap struct {
 
 接着是 extra 字段
 
-```
+```go
 type mapextra struct {
 	// 存放当前 map 下所有的溢出桶的指针
 	overflow    *[]*bmap
@@ -102,11 +102,11 @@ type mapextra struct {
 }
 ```
 
-### 2.2 map 的常规操作
+## 2.2 map 的常规操作
 
 下面我们从四个 map 的常见操作走进基于 桶 + 溢出桶 的实现。
 
-#### 2.2.1 创建
+### 2.2.1 创建
 
 ![image.png](https://img.xiaoshidui.top/blog-pic/images/20251030225101066.png)
 
@@ -292,7 +292,7 @@ func makeBucketArray(t *maptype, b uint8, dirtyalloc unsafe.Pointer) (buckets un
 }
 ```
 
-#### 2.2.2 查询
+### 2.2.2 查询
 
 ![image.png](https://img.xiaoshidui.top/blog-pic/images/20251030230547252.png)
 
@@ -493,14 +493,13 @@ bucketloop:
 	return unsafe.Pointer(&zeroVal[0])
 ```
 
-#### 2.2.3 插入
+### 2.2.3 插入
 
 ![image.png](https://img.xiaoshidui.top/blog-pic/images/20251030234027743.png)
 
 ---
 
 接着就是插入元素啦，让我们来康康走的是那个方法？
-
 ```go
 func main() {
 	// 这里用 interface{} 是因为一些基础类型做 key 的时候，都会走优化过的方法
@@ -754,7 +753,7 @@ done:
 	return elem
 ```
 
-#### 2.2.4 删除
+### 2.2.4 删除
 
 ![image.png](https://img.xiaoshidui.top/blog-pic/images/20251030234416131.png)
 
@@ -989,15 +988,15 @@ if h.flags&hashWriting == 0 {
 h.flags &^= hashWriting
 ```
 
-#### 2.2.5 扩容
+### 2.2.5 扩容
 
-##### 增量扩容
+#### 增量扩容
 
 ![image.png](https://img.xiaoshidui.top/blog-pic/images/20251030235441064.png)
 如上图，当存储密度很高且链足够长的时候，此时会触发增量扩容，也就是扩大 Hash 寻址的范围。数值上来看就是 Buket 数组翻倍，B + 1。进而把同一个溢出桶链上的 kv 打散。如下图
 ![image.png](https://img.xiaoshidui.top/blog-pic/images/20251030235932898.png)
 
-##### 等量扩容
+#### 等量扩容
 
 我们的 map 会经常增删，但是删除的时候，并不会对桶进行回收，所以有可能导致链很长，但是存储密度很低，进而导致 hash 劣化。如下图这种极端情况，一个 buckt 里虽然只有两个 kv 对，但是要搜索完好几个桶才能定位。
 ![image.png](https://img.xiaoshidui.top/blog-pic/images/20251031000400469.png)
@@ -1322,7 +1321,7 @@ if oldbucket == h.nevacuate {
 }
 ```
 
-#### 2.2.6 遍历
+### 2.2.6 遍历
 
 我们先来看 go-map 中一个经典的问题，关注下面的代码，请问输出是什么？
 
@@ -1708,7 +1707,7 @@ i = 0
 goto next
 ```
 
-## 彩蛋
+# 彩蛋
 
 为什么不用 `interface{}` 来表示泛型呢？这样代码可读性会提高不少。
 
