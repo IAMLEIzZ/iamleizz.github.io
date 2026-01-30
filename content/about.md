@@ -18,4 +18,4 @@ author: 小石堆
 </samp>
 </div>
 
-> 📧 Contact me → [1399311818@qq.com](mailto:1399311818@qq.com)
+> 📧 Contact me → 1399311818 AT qq DOT com
