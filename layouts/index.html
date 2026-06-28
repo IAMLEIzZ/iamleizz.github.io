@@ -212,7 +212,7 @@
       min-height: 0;
     }
     .vim-posts {
-      flex: 0 0 220px;
+      flex: 1;
       overflow-y: auto;
     }
     .vim-posts ul { list-style: none; padding: 0; margin: 0; }
@@ -232,10 +232,13 @@
     .vim-posts li.selected .idx { color: var(--green); }
     .vim-reader {
       flex: 1;
+      display: none;
       overflow-y: auto;
       padding-right: 0.5rem;
       color: var(--text);
     }
+    .vim-view.reader-open .vim-posts { display: none; }
+    .vim-view.reader-open .vim-reader { display: block; }
     .vim-reader::-webkit-scrollbar { width: 8px; }
     .vim-reader::-webkit-scrollbar-track { background: transparent; }
     .vim-reader::-webkit-scrollbar-thumb { background: var(--surface0); border-radius: 4px; }
@@ -250,18 +253,6 @@
       scrollbar-width: thin;
       scrollbar-color: var(--surface0) transparent;
     }
-
-    /* normal: full-width list, no empty reader pane */
-    .vim-view.mode-normal .vim-posts {
-      flex: 1;
-      border-right: none;
-      padding-right: 0;
-    }
-    .vim-view.mode-normal .vim-reader { display: none; }
-
-    /* reader: full-width content, list hidden */
-    .vim-view.mode-reader .vim-posts { display: none; }
-    .vim-view.mode-reader .vim-reader { display: block; }
 
     .vim-cmdline {
       margin-top: 0.5rem;
@@ -733,8 +724,6 @@
 
     function setVimMode(mode) {
       vimMode = mode;
-      vimView.classList.remove('mode-normal', 'mode-reader', 'mode-command');
-      if (mode) vimView.classList.add(`mode-${mode}`);
     }
 
     function vimHint(selected) {
@@ -771,6 +760,8 @@
       const selected = vimPostsEl.querySelector(`li[data-idx="${vimIndex}"]`);
       if (selected) selected.scrollIntoView({ block: 'nearest' });
       setVimMode('normal');
+      vimView.classList.remove('reader-open');
+      vimReaderEl.innerHTML = '';
       vimCmdlineEl.textContent = vimHint();
     }
 
@@ -778,6 +769,7 @@
       const post = vimPosts[idx];
       if (!post) return;
       setVimMode('reader');
+      vimView.classList.add('reader-open');
       vimReaderEl.innerHTML = `<div class="vim-post-title">${esc(post.title)}</div><div class="vim-post-date">${esc(post.date)}</div>` + marked.parse(post.content || '');
       vimCmdlineEl.textContent = `"${esc(post.title)}" ${post.content.split(/\n/).length}L, ${post.content.length}B  (h/Esc back, q quit)`;
       requestAnimationFrame(() => vimReaderEl.scrollTo({ top: 0 }));
@@ -786,6 +778,7 @@
     function enterVimMode() {
       vimCommandBuffer = '';
       setVimMode('normal');
+      vimView.classList.remove('reader-open');
       windowEl.querySelectorAll(':scope > *').forEach(el => el.style.display = 'none');
       vimView.style.display = 'flex';
       vimView.classList.add('active');
@@ -797,6 +790,7 @@
     function quitVimMode() {
       vimCommandBuffer = '';
       setVimMode('normal');
+      vimView.classList.remove('reader-open');
       vimView.style.display = 'none';
       vimView.classList.remove('active');
       windowEl.style.overflow = '';
