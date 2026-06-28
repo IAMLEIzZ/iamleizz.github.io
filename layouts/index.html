@@ -213,8 +213,6 @@
     }
     .vim-posts {
       flex: 0 0 220px;
-      border-right: 1px solid var(--surface0);
-      padding-right: 1rem;
       overflow-y: auto;
     }
     .vim-posts ul { list-style: none; padding: 0; margin: 0; }
@@ -238,13 +236,19 @@
       padding-right: 0.5rem;
       color: var(--text);
     }
-    .vim-reader.empty {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--overlay0);
-      font-style: italic;
+
+    /* normal: full-width list, no empty reader pane */
+    .vim-view.mode-normal .vim-posts {
+      flex: 1;
+      border-right: none;
+      padding-right: 0;
     }
+    .vim-view.mode-normal .vim-reader { display: none; }
+
+    /* reader: full-width content, list hidden */
+    .vim-view.mode-reader .vim-posts { display: none; }
+    .vim-view.mode-reader .vim-reader { display: block; }
+
     .vim-cmdline {
       margin-top: 0.5rem;
       padding-top: 0.5rem;
@@ -713,6 +717,18 @@
     let vimMode = 'normal'; // normal | reader | command
     let vimCommandBuffer = '';
 
+    function setVimMode(mode) {
+      vimMode = mode;
+      vimView.classList.remove('mode-normal', 'mode-reader', 'mode-command');
+      if (mode) vimView.classList.add(`mode-${mode}`);
+    }
+
+    function vimHint(selected) {
+      const title = esc(selected || (vimPosts[vimIndex]?.title || ''));
+      if (vimMode === 'reader') return `"${title}"  (h/Esc back, q quit)`;
+      return `"${title}"  (Enter to open, q to quit)`;
+    }
+
     async function loadVimPosts() {
       try {
         const res = await fetch('/posts/index.json');
@@ -740,27 +756,22 @@
       renderVimList();
       const selected = vimPostsEl.querySelector(`li[data-idx="${vimIndex}"]`);
       if (selected) selected.scrollIntoView({ block: 'nearest' });
-      if (vimMode === 'normal') {
-        vimReaderEl.className = 'vim-reader empty';
-        vimReaderEl.innerHTML = 'press Enter to open the selected post';
-      }
-      vimCmdlineEl.textContent = `"${esc(vimPosts[vimIndex]?.title || '')}"`;
+      setVimMode('normal');
+      vimCmdlineEl.textContent = vimHint();
     }
 
     function openVimPost(idx) {
       const post = vimPosts[idx];
       if (!post) return;
-      vimMode = 'reader';
-      vimReaderEl.className = 'vim-reader';
-      const html = marked.parse(post.content || '');
-      vimReaderEl.innerHTML = `<div class="vim-post-title">${esc(post.title)}</div><div class="vim-post-date">${esc(post.date)}</div>` + html;
-      vimCmdlineEl.textContent = `"${esc(post.title)}" ${post.content.split(/\n/).length}L, ${post.content.length}B`;
+      setVimMode('reader');
+      vimReaderEl.innerHTML = `<div class="vim-post-title">${esc(post.title)}</div><div class="vim-post-date">${esc(post.date)}</div>` + marked.parse(post.content || '');
+      vimCmdlineEl.textContent = `"${esc(post.title)}" ${post.content.split(/\n/).length}L, ${post.content.length}B  (h/Esc back, q quit)`;
       requestAnimationFrame(() => vimReaderEl.scrollTo({ top: 0 }));
     }
 
     function enterVimMode() {
-      vimMode = 'normal';
       vimCommandBuffer = '';
+      setVimMode('normal');
       windowEl.querySelectorAll(':scope > *').forEach(el => el.style.display = 'none');
       vimView.style.display = 'flex';
       vimView.classList.add('active');
@@ -770,8 +781,8 @@
     }
 
     function quitVimMode() {
-      vimMode = 'normal';
       vimCommandBuffer = '';
+      setVimMode('normal');
       vimView.style.display = 'none';
       vimView.classList.remove('active');
       windowEl.style.overflow = '';
@@ -783,7 +794,7 @@
     function showVimCommandError(cmd) {
       vimCmdlineEl.textContent = `E492: Not an editor command: ${cmd}`;
       setTimeout(() => {
-        if (vimMode === 'normal') vimCmdlineEl.textContent = '';
+        if (vimMode === 'normal') vimCmdlineEl.textContent = vimHint();
       }, 1500);
     }
 
@@ -799,13 +810,13 @@
           } else {
             showVimCommandError(cmd);
             vimCommandBuffer = '';
-            vimMode = 'normal';
+            setVimMode('normal');
           }
         } else if (e.key === 'Escape') {
           e.preventDefault();
           vimCommandBuffer = '';
-          vimMode = 'normal';
-          vimCmdlineEl.textContent = '';
+          setVimMode('normal');
+          vimCmdlineEl.textContent = vimHint();
         } else if (e.key === 'Backspace') {
           e.preventDefault();
           vimCommandBuffer = vimCommandBuffer.slice(0, -1);
@@ -820,7 +831,7 @@
 
       if (e.key === ':') {
         e.preventDefault();
-        vimMode = 'command';
+        setVimMode('command');
         vimCommandBuffer = '';
         vimCmdlineEl.textContent = ':';
         return true;
@@ -845,7 +856,6 @@
         }
         if (e.key === 'h' || e.key === 'Escape') {
           e.preventDefault();
-          vimMode = 'normal';
           selectVimPost(vimIndex);
           return true;
         }
@@ -898,6 +908,8 @@
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       loginTimeEl.textContent = `${days[now.getDay()]} ${months[now.getMonth()]} ${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')} ${now.getFullYear()}`;
     }
+
+    input.focus();
   </script>
 </body>
 </html>
