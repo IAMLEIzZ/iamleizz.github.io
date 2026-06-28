@@ -236,6 +236,20 @@
       padding-right: 0.5rem;
       color: var(--text);
     }
+    .vim-reader::-webkit-scrollbar { width: 8px; }
+    .vim-reader::-webkit-scrollbar-track { background: transparent; }
+    .vim-reader::-webkit-scrollbar-thumb { background: var(--surface0); border-radius: 4px; }
+    .vim-reader::-webkit-scrollbar-thumb:hover { background: var(--surface1); }
+    .vim-posts::-webkit-scrollbar { width: 6px; }
+    .vim-posts::-webkit-scrollbar-track { background: transparent; }
+    .vim-posts::-webkit-scrollbar-thumb { background: var(--surface0); border-radius: 3px; }
+    .vim-posts::-webkit-scrollbar-thumb:hover { background: var(--surface1); }
+
+    /* Firefox scrollbar styling */
+    .vim-reader, .vim-posts {
+      scrollbar-width: thin;
+      scrollbar-color: var(--surface0) transparent;
+    }
 
     /* normal: full-width list, no empty reader pane */
     .vim-view.mode-normal .vim-posts {
