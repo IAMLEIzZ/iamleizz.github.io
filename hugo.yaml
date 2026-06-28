@@ -36,6 +36,7 @@ menu:
     weight: 5
 
 params:
+  author: 小石堆
   homeInfoParams:
     Title: 'Lifelong Learning' # 主题
     Content: '进步不能停' # 描述
