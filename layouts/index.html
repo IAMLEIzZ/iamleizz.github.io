@@ -111,6 +111,8 @@
       padding: 1.5rem 2rem 2rem;
       overflow-y: auto;
       flex: 1;
+      display: flex;
+      flex-direction: column;
     }
     .window::-webkit-scrollbar { width: 8px; }
     .window::-webkit-scrollbar-track { background: transparent; }
@@ -187,12 +189,144 @@
 
     ::selection { background: rgba(137, 180, 250, 0.25); color: var(--text); }
 
+    .vim-view {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      font-size: 0.95rem;
+    }
+    .vim-view.active { display: flex; }
+    .vim-header {
+      color: var(--overlay0);
+      border-bottom: 1px solid var(--surface0);
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+    }
+    .vim-body {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      gap: 1.5rem;
+      min-height: 0;
+    }
+    .vim-posts {
+      flex: 0 0 220px;
+      border-right: 1px solid var(--surface0);
+      padding-right: 1rem;
+      overflow-y: auto;
+    }
+    .vim-posts ul { list-style: none; padding: 0; margin: 0; }
+    .vim-posts li {
+      padding: 0.35rem 0.5rem;
+      margin-bottom: 0.25rem;
+      cursor: pointer;
+      border-radius: 4px;
+      color: var(--overlay0);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .vim-posts li:hover { background: var(--surface0); color: var(--text); }
+    .vim-posts li.selected { background: var(--surface1); color: var(--text); }
+    .vim-posts li .idx { color: var(--overlay0); margin-right: 0.5rem; }
+    .vim-posts li.selected .idx { color: var(--green); }
+    .vim-reader {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+      color: var(--text);
+    }
+    .vim-reader.empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--overlay0);
+      font-style: italic;
+    }
+    .vim-cmdline {
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--surface0);
+      color: var(--green);
+      min-height: 1.5rem;
+      font-family: var(--font);
+      white-space: pre-wrap;
+    }
+
+    /* Catppuccin markdown inside vim reader */
+    .vim-post-title {
+      color: var(--lavender);
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .vim-post-date {
+      color: var(--overlay0);
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+    .vim-reader h1, .vim-reader h2, .vim-reader h3, .vim-reader h4 {
+      color: var(--lavender);
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+    }
+    .vim-reader h1 { font-size: 1.35rem; }
+    .vim-reader h2 { font-size: 1.15rem; }
+    .vim-reader h3 { font-size: 1rem; }
+    .vim-reader p { margin-bottom: 0.75rem; color: var(--text); }
+    .vim-reader a { color: var(--blue); text-decoration: none; }
+    .vim-reader a:hover { color: var(--text); text-decoration: underline; }
+    .vim-reader ul, .vim-reader ol { margin-left: 1.5rem; margin-bottom: 0.75rem; color: var(--text); }
+    .vim-reader li { margin-bottom: 0.25rem; }
+    .vim-reader code {
+      background: var(--surface0);
+      color: var(--peach);
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+      font-family: var(--font);
+      font-size: 0.9em;
+    }
+    .vim-reader pre {
+      background: var(--mantle);
+      border: 1px solid var(--surface0);
+      border-radius: 6px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-bottom: 0.75rem;
+    }
+    .vim-reader pre code {
+      background: transparent;
+      color: var(--text);
+      padding: 0;
+      font-size: 0.85em;
+    }
+    .vim-reader blockquote {
+      border-left: 3px solid var(--blue);
+      padding-left: 1rem;
+      margin-left: 0;
+      color: var(--subtext0);
+      margin-bottom: 0.75rem;
+    }
+    .vim-reader img { max-width: 100%; border-radius: 4px; margin: 0.5rem 0; }
+    .vim-reader hr { border: none; border-top: 1px solid var(--surface0); margin: 1rem 0; }
+    .vim-reader strong { color: var(--pink); font-weight: 700; }
+    .vim-reader em { color: var(--teal); font-style: italic; }
+    .vim-reader table { border-collapse: collapse; margin-bottom: 0.75rem; }
+    .vim-reader th, .vim-reader td { border: 1px solid var(--surface0); padding: 0.35rem 0.6rem; }
+    .vim-reader th { background: var(--surface0); color: var(--lavender); }
+
     @media (max-width: 480px) {
       .terminal { padding: 0.75rem; }
       .window { padding: 1rem 1.25rem 1.5rem; }
       .window-frame { border-radius: 0; max-height: calc(100vh - 1.5rem); }
       body { font-size: 14px; }
       #terminal-input { font-size: 14px; }
+      .vim-body { flex-direction: column; }
+      .vim-posts { flex: 0 0 auto; border-right: none; border-bottom: 1px solid var(--surface0); padding-right: 0; padding-bottom: 0.5rem; max-height: 35%; }
+      .vim-reader { padding-right: 0; }
     }
   </style>
 </head>
@@ -250,10 +384,20 @@
             <input type="text" id="terminal-input" autocomplete="off" spellcheck="false">
           </div>
         </div>
+
+        <div class="vim-view" id="vim-view">
+          <div class="vim-header">VIM — recent posts</div>
+          <div class="vim-body">
+            <div class="vim-posts" id="vim-posts"></div>
+            <div class="vim-reader" id="vim-reader"></div>
+          </div>
+          <div class="vim-cmdline" id="vim-cmdline"></div>
+        </div>
       </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
     const input = document.getElementById('terminal-input');
     const historyEl = document.getElementById('history');
@@ -347,6 +491,7 @@
         '  cat <file>        display file contents\n' +
         '  pwd               print working directory\n' +
         '  open <path>       open a link\n' +
+        '  vim               open recent posts in vim mode\n' +
         '  clear             clear the terminal\n' +
         '  reset             clear terminal and reset cwd to ~\n' +
         '  date              print current date\n' +
@@ -500,6 +645,7 @@
         else output = `<span class="err">${esc(cmd)}: command not found</span>`;
         if (output) addOutput(output);
         scrollBottom();
+        if (cmd === 'vim') e.stopPropagation();
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         if (cmdHistory.length > 0) {
@@ -554,6 +700,196 @@
     }
 
     document.querySelector('.window-frame').addEventListener('click', () => input.focus());
+
+    /* ---------- VIM MODE ---------- */
+    const vimView = document.getElementById('vim-view');
+    const vimPostsEl = document.getElementById('vim-posts');
+    const vimReaderEl = document.getElementById('vim-reader');
+    const vimCmdlineEl = document.getElementById('vim-cmdline');
+    const windowEl = document.getElementById('window');
+
+    let vimPosts = [];
+    let vimIndex = 0;
+    let vimMode = 'normal'; // normal | reader | command
+    let vimCommandBuffer = '';
+
+    async function loadVimPosts() {
+      try {
+        const res = await fetch('/posts/index.json');
+        if (!res.ok) throw new Error('failed to load posts');
+        vimPosts = await res.json();
+      } catch (e) {
+        vimPosts = [];
+      }
+      if (!vimPosts.length) {
+        vimPostsEl.innerHTML = '<div class="empty">no posts found</div>';
+        return;
+      }
+      renderVimList();
+      selectVimPost(0);
+    }
+
+    function renderVimList() {
+      vimPostsEl.innerHTML = '<ul>' + vimPosts.map((p, i) =>
+        `<li data-idx="${i}" class="${i === vimIndex ? 'selected' : ''}"><span class="idx">${i + 1}</span>${esc(p.title)}</li>`
+      ).join('') + '</ul>';
+    }
+
+    function selectVimPost(idx) {
+      vimIndex = Math.max(0, Math.min(vimPosts.length - 1, idx));
+      renderVimList();
+      const selected = vimPostsEl.querySelector(`li[data-idx="${vimIndex}"]`);
+      if (selected) selected.scrollIntoView({ block: 'nearest' });
+      if (vimMode === 'normal') {
+        vimReaderEl.className = 'vim-reader empty';
+        vimReaderEl.innerHTML = 'press Enter to open the selected post';
+      }
+      vimCmdlineEl.textContent = `"${esc(vimPosts[vimIndex]?.title || '')}"`;
+    }
+
+    function openVimPost(idx) {
+      const post = vimPosts[idx];
+      if (!post) return;
+      vimMode = 'reader';
+      vimReaderEl.className = 'vim-reader';
+      const html = marked.parse(post.content || '');
+      vimReaderEl.innerHTML = `<div class="vim-post-title">${esc(post.title)}</div><div class="vim-post-date">${esc(post.date)}</div>` + html;
+      vimCmdlineEl.textContent = `"${esc(post.title)}" ${post.content.split(/\n/).length}L, ${post.content.length}B`;
+      requestAnimationFrame(() => vimReaderEl.scrollTo({ top: 0 }));
+    }
+
+    function enterVimMode() {
+      vimMode = 'normal';
+      vimCommandBuffer = '';
+      windowEl.querySelectorAll(':scope > *').forEach(el => el.style.display = 'none');
+      vimView.style.display = 'flex';
+      vimView.classList.add('active');
+      windowEl.style.overflow = 'hidden';
+      titlebarText.textContent = 'leizz@xiaoshidui: ~ (vim)';
+      loadVimPosts();
+    }
+
+    function quitVimMode() {
+      vimMode = 'normal';
+      vimCommandBuffer = '';
+      vimView.style.display = 'none';
+      vimView.classList.remove('active');
+      windowEl.style.overflow = '';
+      windowEl.querySelectorAll(':scope > *').forEach(el => el.style.display = '');
+      titlebarText.textContent = `leizz@xiaoshidui: ${displayPath(cwd)}`;
+      input.focus();
+    }
+
+    function showVimCommandError(cmd) {
+      vimCmdlineEl.textContent = `E492: Not an editor command: ${cmd}`;
+      setTimeout(() => {
+        if (vimMode === 'normal') vimCmdlineEl.textContent = '';
+      }, 1500);
+    }
+
+    function handleVimKey(e) {
+      if (!vimView.classList.contains('active')) return false;
+
+      if (vimMode === 'command') {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const cmd = vimCommandBuffer.trim();
+          if (cmd === 'q' || cmd === 'wq' || cmd === 'q!' || cmd === 'x') {
+            quitVimMode();
+          } else {
+            showVimCommandError(cmd);
+            vimCommandBuffer = '';
+            vimMode = 'normal';
+          }
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          vimCommandBuffer = '';
+          vimMode = 'normal';
+          vimCmdlineEl.textContent = '';
+        } else if (e.key === 'Backspace') {
+          e.preventDefault();
+          vimCommandBuffer = vimCommandBuffer.slice(0, -1);
+          vimCmdlineEl.textContent = ':' + vimCommandBuffer;
+        } else if (e.key.length === 1) {
+          e.preventDefault();
+          vimCommandBuffer += e.key;
+          vimCmdlineEl.textContent = ':' + vimCommandBuffer;
+        }
+        return true;
+      }
+
+      if (e.key === ':') {
+        e.preventDefault();
+        vimMode = 'command';
+        vimCommandBuffer = '';
+        vimCmdlineEl.textContent = ':';
+        return true;
+      }
+
+      if (e.key === 'q') {
+        e.preventDefault();
+        quitVimMode();
+        return true;
+      }
+
+      if (vimMode === 'reader') {
+        if (e.key === 'j' || e.key === 'ArrowDown' || e.key === ' ') {
+          e.preventDefault();
+          vimReaderEl.scrollBy({ top: 40, behavior: 'smooth' });
+          return true;
+        }
+        if (e.key === 'k' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          vimReaderEl.scrollBy({ top: -40, behavior: 'smooth' });
+          return true;
+        }
+        if (e.key === 'h' || e.key === 'Escape') {
+          e.preventDefault();
+          vimMode = 'normal';
+          selectVimPost(vimIndex);
+          return true;
+        }
+        if (e.key === 'g' && e.shiftKey) {
+          e.preventDefault();
+          vimReaderEl.scrollTo({ top: vimReaderEl.scrollHeight });
+          return true;
+        }
+        if (e.key === 'g' && !e.shiftKey) {
+          e.preventDefault();
+          vimReaderEl.scrollTo({ top: 0 });
+          return true;
+        }
+        return true;
+      }
+
+      if (e.key === 'j' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectVimPost(vimIndex + 1);
+        return true;
+      }
+      if (e.key === 'k' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectVimPost(vimIndex - 1);
+        return true;
+      }
+      if (e.key === 'Enter' || e.key === 'l') {
+        e.preventDefault();
+        openVimPost(vimIndex);
+        return true;
+      }
+
+      return true;
+    }
+
+    document.addEventListener('keydown', handleVimKey);
+
+    // register vim command in terminal
+    commands.vim = () => {
+      enterVimMode();
+      return '';
+    };
+
+    /* ---------- /VIM MODE ---------- */
 
     const loginTimeEl = document.getElementById('login-time');
     if (loginTimeEl) {

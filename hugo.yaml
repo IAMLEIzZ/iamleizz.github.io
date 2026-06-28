@@ -11,6 +11,9 @@ outputs:
     - HTML
     - RSS
     - JSON
+  section:
+    - HTML
+    - JSON
 
 menu:
   main:
